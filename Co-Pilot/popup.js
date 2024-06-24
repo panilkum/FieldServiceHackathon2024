@@ -1,30 +1,59 @@
-document.getElementById('startJourneyButton').addEventListener('click', async () => {
-  const inputText = document.getElementById('inputText').value;
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('startJourneyButton').addEventListener('click', async () => {
+    debugger;
+    const inputText = document.getElementById('inputText').value;
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
-  // Check if the URL is accessible
-  if (tab.url.startsWith('chrome://')) {
-    document.getElementById('responseText').innerText = 'Cannot capture screenshots of Chrome internal pages.';
-    return;
-  }
+    // Check if the URL is accessible
+    if (tab.url.startsWith('chrome://')) {
+      document.getElementById('responseText').innerText = 'Cannot capture screenshots of Chrome internal pages.';
+      return;
+    }
 
-  // Show loading icon
-  document.getElementById('loading').style.display = 'block';
+    // Show loading icon
+    document.getElementById('loading').style.display = 'block';
 
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: captureScreenshot,
-    args: [inputText],
+    // chrome.scripting.executeScript({
+    //   target: { tabId: tab.id },
+    //   func: captureScreenshot,
+    //   args: [inputText],
+    // });
+
+    debugger;
+    chrome.tabs.captureVisibleTab(null, {}, async (dataUrl) => {
+      console.log(dataUrl)
+      const imageEncodedBase64 = dataUrl.split(',')[1];
+      console.log("ok")
+      const response = await getNextInstruction(dataUrl, inputText);
+      
+      // Hide loading icon and display response
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('responseText').innerText = response;
+      
+      document.getElementById('startJourneyButton').style.display = 'none';
+      document.getElementById('doneButton').style.display = 'block';
+    });
+
+
+
+  });
+
+  document.getElementById('closeButton').addEventListener('click', () => {
+    window.close(); // Close the popup
   });
 });
 
-document.getElementById('closeButton').addEventListener('click', () => {
-  window.close(); // Close the popup
-});
+// function captureScreenshot(inputText) {
+//   // Your captureScreenshot function implementation
+// }
+
 
 function captureScreenshot(inputText) {
+  debugger;
+  console.log(inputText);
   chrome.tabs.captureVisibleTab(null, {}, async (dataUrl) => {
     const imageEncodedBase64 = dataUrl.split(',')[1];
+    debugger;
     const response = await getNextInstruction(imageEncodedBase64, inputText);
     
     // Hide loading icon and display response
@@ -37,7 +66,8 @@ function captureScreenshot(inputText) {
 }
 
 async function getNextInstruction(imageEncodedBase64, textMessage) {
-  const CHAT_KEY = "sk-proj-SGJBNqk5aq5VR2CSig8DT3BlbkFJP2iF9gKhoCe5WZKXRAvM";
+  const CHAT_KEY = "sk-proj-fXVG1IZyq46D2gY7aHNJT3BlbkFJIWBIObR1kNbYeuL8eFtN";
+  debugger;
   const payload = {
     model: "gpt-4o",
     messages: [
@@ -69,7 +99,7 @@ async function getNextInstruction(imageEncodedBase64, textMessage) {
     const data = await response.json();
     return data.choices[0].message.content;
   } catch (error) {
-    console.error('Error calling GPT-4 Vision API:', error);
+    console.error(`Error calling GPT-4 Vision API: ${JSON.stringify(error)}`, error);
     return 'Error: Unable to process the request';
   }
 }
