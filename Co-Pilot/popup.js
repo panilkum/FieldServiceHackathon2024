@@ -32,11 +32,50 @@ document.addEventListener('DOMContentLoaded', () => {
       
       document.getElementById('startJourneyButton').style.display = 'none';
       document.getElementById('doneButton').style.display = 'block';
+      document.getElementById('inputText').style.display = 'none'
     });
 
+  });
 
+
+  document.getElementById('doneButton').addEventListener('click', async () => {
+    debugger;
+    const inputText = "What should I do next?";
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    // Check if the URL is accessible
+    if (tab.url.startsWith('chrome://')) {
+      document.getElementById('responseText').innerText = 'Cannot capture screenshots of Chrome internal pages.';
+      return;
+    }
+
+    // Show loading icon
+    document.getElementById('loading').style.display = 'block';
+
+    // chrome.scripting.executeScript({
+    //   target: { tabId: tab.id },
+    //   func: captureScreenshot,
+    //   args: [inputText],
+    // });
+
+    debugger;
+    chrome.tabs.captureVisibleTab(null, {}, async (dataUrl) => {
+      console.log(dataUrl)
+      const imageEncodedBase64 = dataUrl.split(',')[1];
+      console.log("ok")
+      const response = await getNextInstruction(dataUrl, inputText);
+      
+      // Hide loading icon and display response
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('responseText').innerText = response;
+      
+      document.getElementById('startJourneyButton').style.display = 'none';
+      document.getElementById('doneButton').style.display = 'block';
+    });
 
   });
+
+
 
   document.getElementById('closeButton').addEventListener('click', () => {
     window.close(); // Close the popup
@@ -65,16 +104,19 @@ function captureScreenshot(inputText) {
   });
 }
 
+let  messages = [];
+
 async function getNextInstruction(imageEncodedBase64, textMessage) {
-  const CHAT_KEY = "sk-proj-fXVG1IZyq46D2gY7aHNJT3BlbkFJIWBIObR1kNbYeuL8eFtN";
+  const CHAT_KEY = "PASS";
   debugger;
   const payload = {
     model: "gpt-4o",
     messages: [
       {
         role: "system",
-        content: `USE THE OFFICIAL SALESFORCE DOCS TO HELP THE ADMIN. The admin wants to create a new user named XYZ. GIVE ONE STEP AT A TIME. Read the screenshot shared by the user to know what to do next.`
+        content: `USE THE OFFICIAL SALESFORCE DOCS TO HELP THE ADMIN DO WHAT HE ASKS. GIVE ONE STEP AT A TIME. Read the screenshot shared by the user to know what to do next.`
       },
+      ...messages,
       {
         role: "user",
         content: [
@@ -97,9 +139,22 @@ async function getNextInstruction(imageEncodedBase64, textMessage) {
     });
 
     const data = await response.json();
+    const responseText = data.choices[0].message.content;
+    messages.push({
+      role: "user",
+      content: [{ type: "text", text: textMessage }]
+    });
+    messages.push({
+      role: "assistant",
+      content: responseText
+    });
+
+
     return data.choices[0].message.content;
   } catch (error) {
     console.error(`Error calling GPT-4 Vision API: ${JSON.stringify(error)}`, error);
     return 'Error: Unable to process the request';
   }
 }
+
+
