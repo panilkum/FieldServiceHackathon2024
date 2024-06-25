@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Show loading icon
+          document.getElementById('responseText').style.display = 'none';
     document.getElementById('loading').style.display = 'block';
 
     // chrome.scripting.executeScript({
@@ -96,9 +97,11 @@ function captureScreenshot(inputText) {
   chrome.tabs.captureVisibleTab(null, {}, async (dataUrl) => {
     const imageEncodedBase64 = dataUrl.split(',')[1];
     debugger;
+        document.getElementById('responseText').style.display = 'none';
     const response = await getNextInstruction(imageEncodedBase64, inputText);
     
     // Hide loading icon and display response
+     document.getElementById('responseText').style.display = 'block';
     document.getElementById('loading').style.display = 'none';
     document.getElementById('responseText').innerText = response;
     
@@ -110,7 +113,7 @@ function captureScreenshot(inputText) {
 let  messages = [];
 
 async function getNextInstruction(imageEncodedBase64, textMessage) {
-  const CHAT_KEY = "pass";
+  const CHAT_KEY = "Pass";
   debugger;
   const payload = {
     model: "gpt-4o",

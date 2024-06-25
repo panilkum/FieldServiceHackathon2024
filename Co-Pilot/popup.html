@@ -53,11 +53,14 @@
         }
 
         #loading {
-            display: none;
-            font-size: 14px;
-            color: #555;
-            text-align: center;
-            margin-top: 20px;
+            display: none; 
+            background: url('einstein.gif') no-repeat center center;
+            position: absolute;
+            top: 0;
+            left: 69px;
+            height: 100%;
+            width: 100%;
+            z-index: 9999999;
         }
 
         button:disabled {
@@ -104,24 +107,7 @@
             color: #555;
         }
 
-        .loader {
-            width: fit-content;
-            font-weight: normal;
-            font-family: monospace;
-            white-space: pre;
-            font-size: 20px;
-            line-height: 1.2em;
-            height: 1.2em;
-            overflow: hidden;
-            margin: 20px auto;
-        }
 
-        .loader:before {
-            content:"Loading...\AgodnLai...\Aoiaglni...\ALiongad...\Agindola...\Analoidg...";
-            white-space: pre;
-            display:inline-block;
-            animation: l38 1s infinite steps(6);
-        }
 
         @keyframes l38 {
             100%{transform: translateY(-100%)}
