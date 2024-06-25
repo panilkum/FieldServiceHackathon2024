@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Show loading icon
           document.getElementById('responseText').style.display = 'none';
+          document.getElementById('doneButton').style.display = 'none';
     document.getElementById('loading').style.display = 'block';
 
     // chrome.scripting.executeScript({
@@ -72,6 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('loading').style.display = 'none';
       document.getElementById('responseText').innerText = response;
       document.getElementById('responseText').style.display = 'block';
+    document.getElementById('doneButton').style.display = 'block';
+
       
       document.getElementById('startJourneyButton').style.display = 'none';
       document.getElementById('doneButton').style.display = 'block';
