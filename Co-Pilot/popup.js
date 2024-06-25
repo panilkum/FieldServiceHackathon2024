@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Hide loading icon and display response
       document.getElementById('loading').style.display = 'none';
       document.getElementById('responseText').innerText = response;
+      document.getElementById('responseText').style.display = 'block';
+
       
       document.getElementById('startJourneyButton').style.display = 'none';
       document.getElementById('doneButton').style.display = 'block';
@@ -68,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Hide loading icon and display response
       document.getElementById('loading').style.display = 'none';
       document.getElementById('responseText').innerText = response;
+      document.getElementById('responseText').style.display = 'block';
       
       document.getElementById('startJourneyButton').style.display = 'none';
       document.getElementById('doneButton').style.display = 'block';
@@ -107,14 +110,14 @@ function captureScreenshot(inputText) {
 let  messages = [];
 
 async function getNextInstruction(imageEncodedBase64, textMessage) {
-  const CHAT_KEY = "PASS";
+  const CHAT_KEY = "pass";
   debugger;
   const payload = {
     model: "gpt-4o",
     messages: [
       {
         role: "system",
-        content: `USE THE OFFICIAL SALESFORCE DOCS TO HELP THE ADMIN DO WHAT HE ASKS. GIVE ONE STEP AT A TIME. Read the screenshot shared by the user to know what to do next.`
+        content: `USE THE OFFICIAL SALESFORCE DOCS TO HELP THE ADMIN DO WHAT HE ASKS. GIVE ONE STEP AT A TIME. Read the screenshot shared by the user to know what to do next. Keep instructions brief`
       },
       ...messages,
       {
