@@ -28,7 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Hide loading icon and display response
       document.getElementById('loading').style.display = 'none';
-      document.getElementById('responseText').innerText = response;
+      debugger;
+      document.getElementById('responseText').innerHTML=""
+
+      document.getElementById('responseText').insertAdjacentHTML('beforeend', response);
       document.getElementById('responseText').style.display = 'block';
 
       
@@ -69,7 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // Hide loading icon and display response
       document.getElementById('loading').style.display = 'none';
-      document.getElementById('responseText').innerText = response;
+      document.getElementById('responseText').innerHTML=""
+      document.getElementById('responseText').insertAdjacentHTML('beforeend', response);
       document.getElementById('responseText').style.display = 'block';
       
       document.getElementById('startJourneyButton').style.display = 'none';
@@ -97,10 +101,14 @@ function captureScreenshot(inputText) {
     const imageEncodedBase64 = dataUrl.split(',')[1];
     debugger;
     const response = await getNextInstruction(imageEncodedBase64, inputText);
+
+
     
     // Hide loading icon and display response
     document.getElementById('loading').style.display = 'none';
-    document.getElementById('responseText').innerText = response;
+    document.getElementById('responseText').innerHTML=""
+
+    document.getElementById('responseText').insertAdjacentHTML('beforeend', response);
     
     document.getElementById('startJourneyButton').style.display = 'none';
     document.getElementById('doneButton').style.display = 'block';
@@ -110,7 +118,7 @@ function captureScreenshot(inputText) {
 let  messages = [];
 
 async function getNextInstruction(imageEncodedBase64, textMessage) {
-  const CHAT_KEY = "pass";
+  const CHAT_KEY = "";
   debugger;
   const payload = {
     model: "gpt-4o",
@@ -152,8 +160,12 @@ async function getNextInstruction(imageEncodedBase64, textMessage) {
       content: responseText
     });
 
+const renderedHTML = markdownToHtml(responseText);
 
-    return data.choices[0].message.content;
+// const parser = new DOMParser();
+//     const doc = parser.parseFromString(renderedHTML, 'text/html');
+//     return doc.body.firstChild;
+    return renderedHTML;
   } catch (error) {
     console.error(`Error calling GPT-4 Vision API: ${JSON.stringify(error)}`, error);
     return 'Error: Unable to process the request';
@@ -161,3 +173,52 @@ async function getNextInstruction(imageEncodedBase64, textMessage) {
 }
 
 
+function markdownToHtml(markdown) {
+  // Helper function to escape HTML special characters
+  function escapeHtml(text) {
+    var map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+  }
+
+  var html = '';
+  var lines = markdown.split('\n');
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+
+    // Headers
+    if (line.match(/^#{1,6}/)) {
+      var level = line.match(/^#+/)[0].length;
+      var text = line.replace(/^#+\s/, '');
+      html += '<h' + level + '>' + escapeHtml(text) + '</h' + level + '>';
+    }
+    // Bold
+    else if (line.match(/\*\*.+\*\*/)) {
+      html += '<p>' + line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') + '</p>';
+    }
+    // Italic
+    else if (line.match(/\*.+\*/)) {
+      html += '<p>' + line.replace(/\*(.+?)\*/g, '<em>$1</em>') + '</p>';
+    }
+    // Links
+    else if (line.match(/\[.+\]\(.+\)/)) {
+      html += '<p>' + line.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>') + '</p>';
+    }
+    // Lists
+    else if (line.match(/^[-*+]/)) {
+      html += '<ul><li>' + escapeHtml(line.replace(/^[-*+]\s/, '')) + '</li></ul>';
+    }
+    // Paragraphs
+    else if (line !== '') {
+      html += '<p>' + escapeHtml(line) + '</p>';
+    }
+  }
+  html = html.replace(/['"]/g, '')
+  return html;
+}
