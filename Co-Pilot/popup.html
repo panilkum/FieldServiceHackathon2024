@@ -14,7 +14,7 @@
             width: 378px;
             position: relative;
             margin: 0;
-            height: 500px;
+            height: auto;
         }
 
         .search {
@@ -22,7 +22,6 @@
             position: relative;
             display: flex;
             margin-bottom: 10px;
-            margin-top: 50px;
         }
 
         .searchTerm {
@@ -49,10 +48,8 @@
 
         .wrap {
             width: 90%;
-            position: absolute;
             top: 25%;
             left: 50%;
-            transform: translate(-50%, -50%);
         }
 
         #loading {
@@ -79,20 +76,20 @@
         }
 
         #responseText {
-            margin-top: 20px;
             padding: 10px;
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             display: none;
+            font-size: 14px;
+            font-family: 'Open Sans';
+            margin-bottom: 25px;
         }
 
         .header {
             margin-top: -20px;
             margin-left: -20px;
             padding: 20px;
-            
-            
         }
 
         .header img {
@@ -101,11 +98,10 @@
         }
 
         .header h4 {
-            margin-top: 10px;
+            margin-top: 0px;
             font-family: 'Open Sans', sans-serif;
             font-style: italic;
             color: #555;
-            
         }
 
         .loader {
@@ -141,11 +137,9 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
-            margin-top: 10px;
             transition: background-color 0.3s;
-        }
-
-        #doneButton:hover {
+         #doneButton:
+            hover {
             background-color: #0082b3;
         }
     </style>
@@ -159,13 +153,13 @@
 </div>
 <div class="wrap">
     <div class="search">
-        <input type="text" class="searchTerm" id="inputText" placeholder="Ask your question here!">
+        <input type="text" class="searchTerm" id="inputText" placeholder="How can I help you today?">
         <button id="startJourneyButton" class="searchButton"><i class="fas fa-search"></i></button>
     </div>
-    <button id="doneButton">Done</button>
 </div>
 <div class="loader" id="loading"></div>
 <div id="responseText"></div>
+<button id="doneButton">Done</button>
 
 <script src="popup.js"></script>
 </body>
